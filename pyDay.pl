@@ -52,13 +52,23 @@ my @monDay;
 		$monDay[$m]=30;
 		}
 	$monDay[2]=29; #setting to 29 (max) here, and will limit to 28 in non-leap years below
-	
+my @squareYears;
+my $maxYear = int(sqrt(12**2 + 31**2));		# we can't generate a year greater than this
+#initializing the years that are perfect squares
+	for my $year (1 .. $maxYear) {
+		$squareYears[$year**2] = $year;		#stores the perfect-square year into an array indexed with the squares
+	}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#main
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~    
 for (my $mon=1; $mon<=12; $mon++){						# step through the months
 	for (my $day=1; $day<=$monDay[$mon]; $day++){		# step through the days
-		my $year=sqrt($day**2 + $mon**2);				# calculate the year based on Pythagorean theorem
-		if ($year == int($year)){						# see if the calculated year is a whole number
-			last if ($mon==2 && $day==29 && ($year%4)>0); # skip any non-leapyear Feb 29
-			push @pyDays, [$year, $mon, $day];			# build array
+		my $sum = $day**2 + $mon**2;
+		if (defined $squareYears[$sum]) {				# only add if the sum of the squares is in fact a square 
+														# (i.e., is in the list of perfect-square years)
+			last if ($mon==2 && $day==29 && ($squareYears[$sum]%4)>0); # skip any non-leapyear Feb 29
+			push @pyDays, [$squareYears[$sum], $mon, $day];			# build array
 #			printf $outFH "%d/%d/%d\n", $mon, $day, $year;
 			}
 		}
